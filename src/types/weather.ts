@@ -8,40 +8,64 @@
 
 export type Unit = 'celsius' | 'fahrenheit';
 
-/** Resultado da API de geocoding (uma cidade). */
+/** Localidade escolhida pelo usuário e usada nas consultas meteorológicas. */
 export interface City {
+  /** Identificador da cidade no serviço de geocoding. */
   id: number;
+  /** Nome localizado da cidade. */
   name: string;
+  /** País onde a cidade está localizada. */
   country: string;
-  /** Estado/região, quando disponível (ajuda a desambiguar homônimos). */
-  admin1?: string;
+  /** Região administrativa, quando disponível no geocoding. */
+  region: string | null;
+  /** Latitude usada para consultar a previsão. */
   latitude: number;
+  /** Longitude usada para consultar a previsão. */
   longitude: number;
 }
 
-/** Condições atuais. Temperatura sempre em °C. */
+/** Condições atuais. Temperaturas em °C e vento em km/h. */
 export interface CurrentWeather {
-  temperature: number;
-  weatherCode: number;
-  humidity: number;
-  windSpeed: number;
-  pressure: number;
-  precipitation: number;
-  time: string;
+  /** Horário local da observação, ou null quando ausente. */
+  observedAt: string | null;
+  /** Código WMO da condição atual, ou null quando ausente. */
+  weatherCode: number | null;
+  /** Temperatura atual em Celsius, ou null quando ausente. */
+  temperatureC: number | null;
+  /** Sensação térmica em Celsius, ou null quando ausente. */
+  apparentTemperatureC: number | null;
+  /** Umidade relativa em porcentagem, ou null quando ausente. */
+  relativeHumidity: number | null;
+  /** Velocidade do vento em km/h, ou null quando ausente. */
+  windSpeedKmh: number | null;
+  /** Precipitação do intervalo atual em mm, ou null quando ausente. */
+  precipitationMm: number | null;
+  /** Pressão à superfície em hPa, ou null quando ausente. */
+  surfacePressureHpa: number | null;
 }
 
-/** Um dia da previsão. Temperaturas sempre em °C. */
+/** Previsão diária local. Temperaturas em °C. */
 export interface ForecastDay {
+  /** Data local no formato YYYY-MM-DD. */
   date: string;
-  min: number;
-  max: number;
-  weatherCode: number;
-  precipitationProbability: number;
+  /** Código WMO da condição do dia, ou null quando ausente. */
+  weatherCode: number | null;
+  /** Temperatura mínima em Celsius, ou null quando ausente. */
+  minTemperatureC: number | null;
+  /** Temperatura máxima em Celsius, ou null quando ausente. */
+  maxTemperatureC: number | null;
+  /** Probabilidade máxima diária de precipitação em %, ou null quando ausente. */
+  precipitationProbability: number | null;
 }
 
-/** Agregado entregue à UI: cidade + clima atual + 5 dias de previsão. */
+/** Cidade, fuso, condições atuais e cinco posições da previsão diária. */
 export interface WeatherData {
+  /** Cidade selecionada para a consulta. */
   city: City;
+  /** Identificador de fuso horário IANA retornado pela API. */
+  timezone: string;
+  /** Condições meteorológicas atuais. */
   current: CurrentWeather;
+  /** Previsões diárias locais. */
   forecast: ForecastDay[];
 }
